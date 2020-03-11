@@ -1,0 +1,14 @@
+apiVersion: app.ibm.com/v1alpha1
+kind: PlacementRule
+metadata:
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    heritage: Tiller
+    release: gb
+  name: gb-gbapp
+  namespace: gb-ns
+spec:
+  # clusterLabels: {}
+  clusterNames:
+    - MANAGED_CLUSTER

@@ -1,0 +1,129 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: apptests.app.ibm.com
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.testStatus
+    name: Status
+    type: string
+  - JSONPath: .metadata.creationTimestamp
+    name: Age
+    type: date
+  group: app.ibm.com
+  names:
+    kind: AppTest
+    listKind: AppTestList
+    plural: apptests
+    singular: apptest
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: AppTest is the Schema for the apptests API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: AppTestSpec defines the desired state of AppTest
+          properties:
+            resources:
+              items:
+                description: AppTestResources defines the resources that need to be
+                  checked
+                properties:
+                  apiVersion:
+                    description: 'APIVersion defines the versioned schema of this
+                      representation of an object. Servers should convert recognized
+                      schemas to the latest internal value, and may reject unrecognized
+                      values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                    type: string
+                  cluster:
+                    description: Cluster defaults to hub cluster if not specified
+                    type: string
+                  currentStatus:
+                    description: Updated by the controller to show current status
+                      of the defined resource
+                  desiredStatus:
+                    description: String to interface mapping to define a flexible
+                      spec profile
+                  kind:
+                    description: 'Kind is a string value representing the REST resource
+                      this object represents. Servers may infer this from the endpoint
+                      the client submits requests to. Cannot be updated. In CamelCase.
+                      More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                    type: string
+                  messages:
+                    items:
+                      type: string
+                    type: array
+                  metadata:
+                    type: object
+                required:
+                - cluster
+                - desiredStatus
+                type: object
+              type: array
+          required:
+          - resources
+          type: object
+        status:
+          description: AppTestStatus defines the observed state of AppTest
+          properties:
+            failedResources:
+              items:
+                description: AppTestResources defines the resources that need to be
+                  checked
+                properties:
+                  apiVersion:
+                    description: 'APIVersion defines the versioned schema of this
+                      representation of an object. Servers should convert recognized
+                      schemas to the latest internal value, and may reject unrecognized
+                      values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                    type: string
+                  cluster:
+                    description: Cluster defaults to hub cluster if not specified
+                    type: string
+                  currentStatus:
+                    description: Updated by the controller to show current status
+                      of the defined resource
+                  desiredStatus:
+                    description: String to interface mapping to define a flexible
+                      spec profile
+                  kind:
+                    description: 'Kind is a string value representing the REST resource
+                      this object represents. Servers may infer this from the endpoint
+                      the client submits requests to. Cannot be updated. In CamelCase.
+                      More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                    type: string
+                  messages:
+                    items:
+                      type: string
+                    type: array
+                  metadata:
+                    type: object
+                required:
+                - cluster
+                - desiredStatus
+                type: object
+              type: array
+            testStatus:
+              type: string
+          type: object
+      type: object
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true

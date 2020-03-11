@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multicloud-operators-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: multicloud-operators-test
+  template:
+    metadata:
+      labels:
+        name: multicloud-operators-test
+    spec:
+      serviceAccountName: multicloud-operators-test
+      containers:
+        - name: multicloud-operators-test
+          image: quay.io/stevekimibm/multicloud-operators-test
+          command:
+          - multicloud-operators-test
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: config-volume
+            mountPath: /etc/config
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "multicloud-operators-test"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: kubeconfigs

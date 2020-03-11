@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gb-ns
+spec:
+---
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    heritage: Tiller
+    release: gb
+  name: gb-gbapp
+  namespace: gb-ns
+spec:
+  componentKinds:
+  - group: app.ibm.com
+    kind: Subscription
+  selector:
+    matchExpressions:
+    - key: release
+      operator: In
+      values:
+      - gb

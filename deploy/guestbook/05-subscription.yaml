@@ -1,0 +1,21 @@
+apiVersion: app.ibm.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    app: gbapp
+    chart: gbapp-0.1.0
+    heritage: Tiller
+    release: gb
+  name: gb-gbapp-guestbook
+  namespace: gb-ns
+spec:
+  channel: gb-ch-ns/gb-ch
+  overrides:
+  - clusterName: /
+    clusterOverrides:
+    - path: metadata.namespace
+      value: default
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: gb-gbapp

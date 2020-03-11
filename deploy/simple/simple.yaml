@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: gb-frontend-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gbchn
+      release: gb-ch
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: gbchn
+        release: gb-ch
+        tier: frontend
+    spec:
+      containers:
+      - env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        image: gcr.io/google-samples/gb-frontend:v6
+        imagePullPolicy: IfNotPresent
+        name: frontend
+        ports:
+        - containerPort: 80

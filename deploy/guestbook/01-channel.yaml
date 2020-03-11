@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gb-ch-ns
+spec:
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Channel
+metadata:
+  labels:
+    app: gbchn
+    chart: gbchn-0.1.0
+    heritage: Tiller
+    release: gb-ch
+  name: gb-ch
+  namespace: gb-ch-ns
+spec:
+  pathname: gb-ch-ns
+  type: Namespace

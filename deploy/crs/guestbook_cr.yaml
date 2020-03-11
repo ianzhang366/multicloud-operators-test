@@ -1,0 +1,62 @@
+apiVersion: app.ibm.com/v1alpha1
+kind: AppTest
+metadata:
+  name: guestbook-test
+spec: 
+  resources:
+    # Resources to check in the hub cluster
+    - apiVersion: app.ibm.com/v1alpha1
+      kind: PlacementRule
+      metadata: 
+        name: gb-gbapp
+        namespace: gb-ns
+      cluster: "/" 
+      desiredStatus:
+        decisions:
+        - clusterName: MANAGED_CLUSTER
+          clusterNamespace: MANAGED_CLUSTER
+    - apiVersion: app.ibm.com/v1alpha1
+      kind: Subscription
+      metadata: 
+        name: gb-gbapp-guestbook
+        namespace: gb-ns
+      cluster: "/" 
+      desiredStatus:
+        phase: Propagated
+    # Resources to check in the managed cluster
+    - apiVersion: extensions/v1beta1
+      kind: Deployment
+      metadata: 
+        name: gb-ch-gbchn-frontend
+        namespace: default
+      cluster: MANAGED_CLUSTER
+      desiredStatus:
+        availableReplicas: 1
+        readyReplicas: 1
+        replicas: 1
+        updatedReplicas: 1
+    - apiVersion: extensions/v1beta1
+      kind: Deployment
+      metadata: 
+        name: gb-ch-gbchn-redismaster
+        namespace: default
+      cluster: MANAGED_CLUSTER
+      desiredStatus:
+        availableReplicas: 1
+        readyReplicas: 1
+        replicas: 1
+        updatedReplicas: 1
+    - apiVersion: extensions/v1beta1
+      kind: Deployment
+      metadata: 
+        name: gb-ch-gbchn-redisslave
+        namespace: default
+      cluster: MANAGED_CLUSTER
+      desiredStatus:
+        availableReplicas: 1
+        readyReplicas: 1
+        replicas: 1
+        updatedReplicas: 1
+    
+    
+    

@@ -1,0 +1,202 @@
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  labels:
+    app: gbchn
+    chart: gbchn-0.1.0
+    heritage: Tiller
+    release: gb-ch
+  name: gb-ch-gbchn-frontend
+  namespace: gb-ch-ns
+spec:
+  template:
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: gb-ch-gbchn-frontend
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: gbchn
+          release: gb-ch
+          tier: frontend
+      template:
+        metadata:
+          labels:
+            app: gbchn
+            release: gb-ch
+            tier: frontend
+        spec:
+          containers:
+          - env:
+            - name: GET_HOSTS_FROM
+              value: dns
+            image: gcr.io/google-samples/gb-frontend:v6
+            imagePullPolicy: IfNotPresent
+            name: frontend
+            ports:
+            - containerPort: 80
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  labels:
+    app: gbchn
+    chart: gbchn-0.1.0
+    heritage: Tiller
+    release: gb-ch
+  name: gb-ch-gbchn-redismaster
+  namespace: gb-ch-ns
+spec:
+  template:
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: gb-ch-gbchn-redismaster
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: gbchn
+          release: gb-ch
+          role: master
+          tier: backend
+      template:
+        metadata:
+          labels:
+            app: gbchn
+            release: gb-ch
+            role: master
+            tier: backend
+        spec:
+          containers:
+          - image: gcr.io/kubernetes-e2e-test-images/redis:1.0
+            imagePullPolicy: IfNotPresent
+            name: redis
+            ports:
+            - containerPort: 6379
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  labels:
+    app: gbchn
+    chart: gbchn-0.1.0
+    heritage: Tiller
+    release: gb-ch
+  name: gb-ch-gbchn-redismasterservice
+  namespace: gb-ch-ns
+spec:
+  template:
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: redis-master
+    spec:
+      ports:
+      - port: 6379
+      selector:
+        app: gbchn
+        release: gb-ch
+        role: master
+        tier: backend
+      type: ClusterIP
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  labels:
+    app: gbchn
+    chart: gbchn-0.1.0
+    heritage: Tiller
+    release: gb-ch
+  name: gb-ch-gbchn-redisslave
+  namespace: gb-ch-ns
+spec:
+  template:
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: gb-ch-gbchn-redisslave
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: gbchn
+          release: gb-ch
+          role: slave
+          tier: backend
+      template:
+        metadata:
+          labels:
+            app: gbchn
+            release: gb-ch
+            role: slave
+            tier: backend
+        spec:
+          containers:
+          - env:
+            - name: GET_HOSTS_FROM
+              value: dns
+            image: gcr.io/google_samples/gb-redisslave:v3
+            imagePullPolicy: IfNotPresent
+            name: gbchn
+            ports:
+            - containerPort: 6379
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  labels:
+    app: gbchn
+    chart: gbchn-0.1.0
+    heritage: Tiller
+    release: gb-ch
+  name: gb-ch-gbchn-redisslaveservice
+  namespace: gb-ch-ns
+spec:
+  template:
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: redis-slave
+    spec:
+      ports:
+      - port: 6379
+      selector:
+        app: gbchn
+        release: gb-ch
+        role: slave
+        tier: backend
+      type: ClusterIP
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  labels:
+    app: gbchn
+    chart: gbchn-0.1.0
+    heritage: Tiller
+    release: gb-ch
+  name: gb-ch-gbchn-service
+  namespace: gb-ch-ns
+spec:
+  template:
+    apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        app: gbchn
+        chart: gbchn-0.1.0
+        heritage: Tiller
+        release: gb-ch
+      name: gb-ch-gbchn
+    spec:
+      ports:
+      - port: 80
+      selector:
+        app: gbchn
+        release: gb-ch
+        tier: frontend
+      type: NodePort
